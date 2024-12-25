@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Toko Mainan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Toko Mainan</a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="catalog.html">Katalog</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cart.html">Keranjang</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="checkout.html">Checkout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Checkout Section -->
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Checkout</h1>
+
+        <!-- Ringkasan Pembelian -->
+        <div id="cart-summary">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Produk</th>
+                        <th>Harga</th>
+                        <th>Jumlah</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody id="cart-items">
+                    <!-- Cart items will be dynamically added here -->
+                </tbody>
+            </table>
+            <div class="text-end">
+                <h5>Total Keseluruhan: <span id="total-price">Rp0</span></h5>
+            </div>
+        </div>
+
+        <!-- Form Pembayaran -->
+        <div id="payment-form" class="mt-4">
+            <h4>Form Pembayaran</h4>
+            <form id="checkout-form">
+                <div class="mb-3">
+                    <label for="full-name" class="form-label">Nama Lengkap</label>
+                    <input type="text" class="form-control" id="full-name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="address" class="form-label">Alamat Pengiriman</label>
+                    <input type="text" class="form-control" id="address" required>
+                </div>
+                <div class="mb-3">
+                    <label for="payment-method" class="form-label">Metode Pembayaran</label>
+                    <select class="form-control" id="payment-method" required>
+                        <option value="credit-card">Kartu Kredit</option>
+                        <option value="bank-transfer">Transfer Bank</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-success">Proses Pembayaran</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light text-center text-lg-start mt-5">
+        <div class="text-center p-3">
+            &copy; 2024 Toko Mainan. All Rights Reserved.
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Script to manage checkout functionality -->
+    <script>
+        // Display cart summary and calculate total price
+        function displayCartSummary() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            let total = 0;
+            const cartItemsBody = document.getElementById('cart-items');
+            cartItemsBody.innerHTML = '';
+
+            if (cart.length === 0) {
+                cartItemsBody.innerHTML = '<tr><td colspan="4" class="text-center">Keranjang Belanja Kosong</td></tr>';
+                return;
+            }
+
+            cart.forEach(item => {
+                const itemTotalPrice = parseFloat(item.price.replace('Rp ', '').replace('.', '').replace(',', '.')) * item.quantity;
+                total += itemTotalPrice;
+
+                const itemHTML = `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>${item.price}</td>
+                        <td>${item.quantity}</td>
+                        <td>Rp ${itemTotalPrice.toLocaleString('id-ID')}</td>
+                    </tr>
+                `;
+                cartItemsBody.innerHTML += itemHTML;
+            });
+
+            document.getElementById('total-price').textContent = 'Rp ' + total.toLocaleString('id-ID');
+        }
+
+        // Handle the checkout form submission
+        document.getElementById('checkout-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+            
+            // Get form data
+            const name = document.getElementById('full-name').value;
+            const address = document.getElementById('address').value;
+            const paymentMethod = document.getElementById('payment-method').value;
+
+            // Process the payment (this can be more complex, such as integrating with a payment API)
+            alert(`Pembayaran diproses untuk ${name}\nAlamat: ${address}\nMetode Pembayaran: ${paymentMethod}`);
+            
+            // Clear the cart and localStorage after successful checkout
+            localStorage.removeItem('cart');
+
+            // Redirect to the confirmation page (you can change this to an actual confirmation page)
+            window.location.href = 'confirmation.html';
+        });
+
+        // Initialize page
+        window.onload = function() {
+            displayCartSummary();
+        }
+    </script>
+</body>
+</html>
